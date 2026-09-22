@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using Dalamud.Game.Text.SeStringHandling;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,22 +13,29 @@ public unsafe class ReaderXBMContentsItemShop(AtkUnitBase* UnitBase, int BeginOf
 
 
     public uint             StockCount   => ReadUInt(2) ?? 0u;
-    public List<StockEntry> StockEntries => Loop<StockEntry>(3, 5, (int)StockCount);
+
+
+    private const int StockOffset    = 3;
+    private const int StockEntrySize = 5;
+
+    public List<StockEntry> StockEntries => Loop<StockEntry>(StockOffset, StockEntrySize, (int)StockCount);
 
     public class StockEntry(nint UnitBasePtr, int BeginOffset = 0) : AtkReader(UnitBasePtr, BeginOffset)
     {
+        public readonly int purchaseIndex = (BeginOffset - StockOffset) / StockEntrySize;
+
         public bool Listed => ReadBool(0) ?? false;
 
-        public uint   Item        => ReadUInt(1) ?? 0u;
-        public string PriceString => ReadString(2);
-        public uint   Price
+        public uint     Item        => ReadUInt(1) ?? 0u;
+        public SeString PriceString => ReadSeString(2);
+        public uint     Price
         {
             get
             {
-                var text = PriceString;
+                var text = PriceString.GetText().Trim();
                 var ind  = text.IndexOf('(');
 
-                return uint.TryParse(ind >= 0 ? text[..ind].Trim() : text, out var price) ? price : 0;
+                return uint.TryParse(ind >= 0 ? text[..ind] : text, out var rankString) ? rankString : 0;
             }
         }
 
@@ -43,7 +51,7 @@ public unsafe class ReaderXBMContentsItemShop(AtkUnitBase* UnitBase, int BeginOf
     {
         public bool   Unk0     => ReadBool(0) ?? false;
         public bool   Sellable => ReadBool(1) ?? false;
-        public uint   Unk2     => ReadUInt(2) ?? 0;
+        public uint   IconId   => ReadUInt(2) ?? 0;
         public uint   Id       => ReadUInt(3) ?? 0;
         public string Name     => ReadString(4);
     }
