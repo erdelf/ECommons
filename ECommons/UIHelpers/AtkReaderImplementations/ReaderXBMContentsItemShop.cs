@@ -12,7 +12,7 @@ public unsafe class ReaderXBMContentsItemShop(AtkUnitBase* UnitBase, int BeginOf
     public uint   Coins       => uint.TryParse(CoinsString.Replace(",", ""), out var value) ? value : 0u;
 
 
-    public uint             StockCount   => ReadUInt(2) ?? 0u;
+    public uint StockCount => ReadUInt(2) ?? 0u;
 
 
     private const int StockOffset    = 3;
