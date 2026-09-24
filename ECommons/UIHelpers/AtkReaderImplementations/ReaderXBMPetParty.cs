@@ -63,6 +63,8 @@ public unsafe class ReaderXBMPetParty(AtkUnitBase* UnitBase, int BeginOffset = 0
         public bool FlatDamage_Death     => ReadBool(56) ?? false;
         public bool Poison               => ReadBool(57) ?? false;
 
-        public uint     Number     => ReadUInt(76) ?? 0u;
+        public uint FedCurrent => ReadUInt(72) ?? 0u;
+        public uint FedMax     => ReadUInt(73) ?? 0u;
+        public uint Number     => ReadUInt(76) ?? 0u;
     }
 }
