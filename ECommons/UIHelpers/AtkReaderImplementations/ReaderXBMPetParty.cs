@@ -7,13 +7,15 @@ namespace ECommons.UIHelpers.AtkReaderImplementations;
 public unsafe class ReaderXBMPetParty(AtkUnitBase* UnitBase, int BeginOffset = 0) : AtkReader(UnitBase, BeginOffset)
 {
     public uint EntryCount => ReadUInt(5) ?? 0;
-    public List<MonsterEntry> TeamEntries => Loop<MonsterEntry>(6, 76, (int)EntryCount);
+    public List<MonsterEntry> TeamEntries => Loop<MonsterEntry>(6, 77, (int)EntryCount);
 
 
     public uint TeamSize => ReadUInt(1162) ?? 0;
 
     public class MonsterEntry(nint UnitBasePtr, int BeginOffset = 0) : AtkReader(UnitBasePtr, BeginOffset)
     {
+        public readonly int index = (BeginOffset - 6) / 77;
+
         public SeString RankString => ReadSeString(0);
         public uint     Rank
         {
@@ -25,6 +27,9 @@ public unsafe class ReaderXBMPetParty(AtkUnitBase* UnitBase, int BeginOffset = 0
                 return uint.TryParse(text[(ind + 1)..].Trim(), out var rankString) ? rankString : 0;
             }
         }
+
+        public uint Unk1 => ReadUInt(1) ?? 0;
+        public bool Disabled => ReadBool(2) ?? false;
 
         public SeString Name  => ReadSeString(3);
         public uint     HP    => ReadUInt(5) ?? 0;
