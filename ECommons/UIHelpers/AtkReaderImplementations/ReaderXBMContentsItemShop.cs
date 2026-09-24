@@ -32,7 +32,7 @@ public unsafe class ReaderXBMContentsItemShop(AtkUnitBase* UnitBase, int BeginOf
         {
             get
             {
-                var text = PriceString.GetText().Trim();
+                var text = PriceString.GetText().Replace(",", "").Trim();
                 var ind  = text.IndexOf('(');
 
                 return uint.TryParse(ind >= 0 ? text[..ind] : text, out var rankString) ? rankString : 0;
@@ -43,9 +43,11 @@ public unsafe class ReaderXBMContentsItemShop(AtkUnitBase* UnitBase, int BeginOf
         public bool Bought     => ReadBool(4) ?? false;
     }
 
+    public const int ITEM_ENTRY_SIZE   = 5;
+    public const int ITEM_ENTRY_LENGTH = 10;
 
-    public List<ItemEntry>        ItemEntries      => Loop<ItemEntry>(154, 5, 10);
-    public IEnumerable<ItemEntry> ItemEntriesValid => ItemEntries.Where(ie => ie.Id > 0);
+    public       List<ItemEntry>        ItemEntries      => Loop<ItemEntry>(154, ITEM_ENTRY_SIZE, ITEM_ENTRY_LENGTH);
+    public       IEnumerable<ItemEntry> ItemEntriesValid => ItemEntries.Where(ie => ie.Id > 0);
 
     public class ItemEntry(nint UnitBasePtr, int BeginOffset = 0) : AtkReader(UnitBasePtr, BeginOffset)
     {
@@ -56,8 +58,10 @@ public unsafe class ReaderXBMContentsItemShop(AtkUnitBase* UnitBase, int BeginOf
         public string Name     => ReadString(4);
     }
 
+    public const int GEAR_ENTRY_SIZE   = 5;
+    public const int GEAR_ENTRY_LENGTH = 10;
 
-    public List<GearEntry>        OwnedEntries      => Loop<GearEntry>(205, 5, 10);
+    public List<GearEntry>        OwnedEntries      => Loop<GearEntry>(205, GEAR_ENTRY_SIZE, GEAR_ENTRY_LENGTH);
     public IEnumerable<GearEntry> OwnedEntriesOwned => OwnedEntries.Where(oe => oe.Owned);
 
     public class GearEntry(nint UnitBasePtr, int BeginOffset = 0) : AtkReader(UnitBasePtr, BeginOffset)
