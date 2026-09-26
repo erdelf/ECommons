@@ -16,7 +16,7 @@ public unsafe class ReaderXBMContentsBooty(AtkUnitBase* UnitBase, int BeginOffse
 
     private const int LootOffset = 9;
     private const int LootEntrySize = 5;
-    public List<LootChoice> LootChoices => Loop<LootChoice>(LootOffset, LootEntrySize, 3);
+    public List<LootChoice> LootChoices => Loop<LootChoice>(LootOffset, LootEntrySize, 4);
 
     public class LootChoice(nint UnitBasePtr, int BeginOffset = 0) : AtkReader(UnitBasePtr, BeginOffset)
     {
